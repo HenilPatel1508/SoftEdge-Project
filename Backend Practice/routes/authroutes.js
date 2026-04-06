@@ -5,9 +5,10 @@ const User = require("../models/userModel")
 
 router.post("/register",async(req,res)=>{
     try{
-       const { name, email, password } = req.body || {};
+        const {name,email,password} = req.body;
         console.log("Body : ",req.body);
-      
+        
+
         const hashedpassword = await bcrypt.hash(password,10)
 
         const user = await User.create({
