@@ -1,7 +1,7 @@
 const express = require('express')
 const {  mongoose } = require('mongoose')
 const cors = require("cors");
-const app = express()
+const app = express();
 const port = 3000
 const authroutes = require("./routes/authroutes")
 const authMiddleware = require("./middleware/authmiddleware");
