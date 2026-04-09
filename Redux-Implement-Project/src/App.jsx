@@ -1,6 +1,7 @@
 import React from "react";
 import SearchBar from "./component/SearchBar";
 import Tabs from "./component/Tabs";
+import ResulGrid from "./component/ResulGrid";
 // import { fetchGIF, fetchPhotos, fetchVideos } from "./api/mediaApi";
 const App = () => {
   return (
@@ -37,6 +38,7 @@ const App = () => {
 
       <SearchBar />
       <Tabs />
+      <ResulGrid/>
     </div>
   );
 };
