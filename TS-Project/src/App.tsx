@@ -3,6 +3,7 @@ import { Card } from './components/Card.tsx'
 import { Counter } from './components/Counter.tsx'
 import type { coffee } from './types.ts'
 import { Colist } from './components/list.tsx'
+import OrderForm from './components/OrderForm.tsx'
 
 const menu: coffee[] = [
   {id: 1, name: "Espresso", price: 300},
@@ -26,6 +27,12 @@ function App() {
         </div>
         <div>
           <Colist items={menu}/>
+        </div>
+        <div>
+          <OrderForm onsubmit={(order)=>{
+            console.log('Order received:', order.name, order.cups);
+
+          }}/>
         </div>
       </section>
 
