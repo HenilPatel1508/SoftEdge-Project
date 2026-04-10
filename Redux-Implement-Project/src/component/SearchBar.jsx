@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { setQuery } from "../redux/features/searchSlice";
 
 const SearchBar = () => {
     const [text, setText] = useState('');

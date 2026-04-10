@@ -5,7 +5,7 @@ const PEXELS_KEY = import.meta.env.VITE_PEXELS_KEY;
 const TENOR_KEY = import.meta.env.VITE_TENOR_KEY;
 
 
-export async function fetchPhotos(query,page=1,per_page=10) {
+export async function fetchPhotos(query,page=1,per_page=20) {
     const res =await axios.get('https://api.unsplash.com/search/photos', {
         params: {query ,page,per_page},
         headers: {Authorization: `Client-ID ${UNSPLASH_KEY}`}
