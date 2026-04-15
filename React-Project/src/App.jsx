@@ -7,6 +7,7 @@ import { AuthContext } from './context/AuthProvider'
 
 const App = () => {
   const [user, setUser] = useState(null);
+
   const handleLogin = (email,password)=>{
     if(email == "admin@me.com" && password == "123"){
       setUser('admin')
@@ -24,10 +25,14 @@ const App = () => {
   const data = useContext(AuthContext)
   console.log(data);
 
+  
+
   return (
     <>
       {!user?<Login handleLogin={handleLogin} />:''}
-      {user == "admin" ? <AdminDashboard/> : <EmployeeDashboard/>}
+      {/* {user == "admin" ? <AdminDashboard/> : <EmployeeDashboard/>} */}
+      {user == "admin" && <AdminDashboard/>}
+      {user == "employee" && <EmployeeDashboard/>}
     </>
   )
 }
