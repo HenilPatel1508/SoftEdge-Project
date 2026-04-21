@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "./ui/button";
+import { Link, useNavigate } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -11,18 +12,18 @@ const Hero = () => {
               Branded Clothes at Best Price
             </h1>
             <p className="text-xl mb-6 text-black">
-              Discover Cutting edge technology with unbeatable deals on
-              Shirt,Pants ,T-shirts and more.
+              Discover Cutting edge cloths with unbeatable deals on
+              Shirt,Pants,T-shirts and more.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button className="bg-black text-cyan-200 text-2xl hover:bg-white hover:text-black p-5">
-                Shop Now
+                <Link to='/products'>Shop Now</Link>
               </Button>
               <Button
                 className="border-white text-white hover:bg-white text-2xl hover:text-black bg-transparent p-5"
                 variant="outline"
               >
-                View Deals
+               <Link to='/products'> View Deals</Link>
               </Button>
             </div>
           </div>

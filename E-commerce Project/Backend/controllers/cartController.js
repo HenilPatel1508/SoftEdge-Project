@@ -46,7 +46,7 @@ export const addToCart = async (req, res) => {
     } else {
       //Find if Product is already in the cart
       const itemIndex = cart.items.findIndex(
-        (item) => item.productId.toString() === productId
+        (item) => item.productId.toString() === productId,
       );
       if (itemIndex > -1) {
         //If Product Exists -> just increase quantity
@@ -61,7 +61,8 @@ export const addToCart = async (req, res) => {
       }
       //Recalculate total Price
       cart.totalPrice = cart.items.reduce(
-        (acc, item) => acc + item.price * item.quantity,0
+        (acc, item) => acc + item.price * item.quantity,
+        0,
       );
     }
 
@@ -108,10 +109,12 @@ export const updateQuantity = async (req, res) => {
       });
     }
     if (type === "increase") item.quantity += 1;
-    if (type === "decrease" && item.quantity > 1) item.quantity -= 1;
+    if (type === "decrease" && item.quantity > 1) {
+      item.quantity -= 1;
+    }
 
     cart.totalPrice = cart.items.reduce(
-      (acc, item) => acc + item.price * item.quantity,
+      (acc, item) => acc + Number(item.price) * Number(item.quantity),
       0,
     );
     await cart.save();
@@ -142,18 +145,32 @@ export const removeFromCart = async (req, res) => {
         message: "Cart Not Found",
       });
     }
-    cart.items = cart.items.filter(
-      (item) => item.productId.toString() !== productId,
-    );
+    cart.items = cart.items.filter((item) => {
+      const id = item.productId?._id
+        ? item.productId._id.toString()
+        : item.productId.toString();
+
+      return id !== productId;
+    });
+    if (cart.items.length === 0) {
+      await Cart.findByIdAndDelete(cart._id);
+
+      return res.status(200).json({
+        success: true,
+        cart: null,
+      });
+    }
     cart.totalPrice = cart.items.reduce(
-      (acc, item) => acc + item.price * item.quantity,
+      (acc, item) => acc + Number(item.price) * Number(item.quantity),
       0,
     );
-    await cart.save()
+
+    await cart.save();
+    cart = await cart.populate("items.productId");
     res.status(200).json({
-        success:true,
-        cart
-    })
+      success: true,
+      cart,
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,

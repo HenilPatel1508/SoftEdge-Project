@@ -16,7 +16,7 @@ import { Eye, EyeOff, Loader, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/redux/userSlice";
 
 const Login = () => {
@@ -27,7 +27,7 @@ const Login = () => {
     password: "",
   });
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handlechange = (e) => {
     const { name, value } = e.target;
@@ -51,15 +51,22 @@ const Login = () => {
           },
         },
       );
-      if (res.data.success||res.data.message) {
-        navigate("/");
-        dispatch(setUser(res.data.user))
-        localStorage.setItem("accessToken",res.data.token)
-        toast.success(res.data.message,{position:"top-right"});
+      if (res.data.success || res.data.message) {
+        dispatch(setUser(res.data.user));
+        localStorage.setItem("accessToken", res.data.token);
+        // Direct admin redirect
+        if (res.data.user.role === "admin") {
+          navigate("/dashboard"); // or /dashboard
+        } else {
+          navigate("/");
+        }
+
+        
+        toast.success(res.data.message, { position: "top-right" });
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message,{position:"top-right"});
+      toast.error(error.response.data.message, { position: "top-right" });
     } finally {
       setLoading(false);
     }
