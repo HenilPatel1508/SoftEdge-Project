@@ -13,7 +13,7 @@ const Navbar = () => {
   const cart = useSelector((store) => store.product.cart);
   const user = useSelector((store) => store.user?.user);
   const accessToken = localStorage.getItem("accessToken");
-   const admin = user?.role === "admin" ? true : false;
+  const admin = user?.role === "admin" ? true : false;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -39,74 +39,68 @@ const Navbar = () => {
   console.log(cart);
 
   return (
-   
     <header className="bg-cyan-50 fixed w-full z-20 border-b border-indigo-300">
-  <div className="max-w-7xl mx-auto flex justify-between items-center py-3">
-    
-    {/* logo */}
-    <div>
-      <img src="/shopping-cart.png" className="w-27 object-cover" alt="" />
-    </div>
+      <div className="max-w-7xl mx-auto flex justify-between items-center py-3 px-10">
+        {/* logo */}
+        <div>
+          <img src="/shopping-cart.png" className="w-27 object-cover" alt="" />
+        </div>
 
-    {/* nav */}
-    <nav className="flex gap-10 justify-between items-center">
-      
-      <ul className="flex gap-10 items-center text-xl font-semibold">
-
-        {admin ? (
-          <Link to="/dashboard">
-            <li>Dashboard</li>
-          </Link>
-        ) : (
-          <>
-            <Link to="/">
-              <li>Home</li>
-            </Link>
-
-            <Link to="/products">
-              <li>Product</li>
-            </Link>
-
-            {user && (
-              <Link to="/profile">
-                <li>Hello, {user.firstname}</li>
+        {/* nav */}
+        <nav className="flex gap-10 justify-between items-center">
+          <ul className="flex gap-10 items-center text-xl font-semibold">
+            {admin ? (
+              <Link to="/dashboard">
+                <li>Dashboard</li>
               </Link>
+            ) : (
+              <>
+                <Link to="/">
+                  <li>Home</li>
+                </Link>
+
+                <Link to="/products">
+                  <li>Product</li>
+                </Link>
+
+                {user && (
+                  <Link to="/profile">
+                    <li>Hello, {user.firstname}</li>
+                  </Link>
+                )}
+              </>
             )}
-          </>
-        )}
+          </ul>
 
-      </ul>
+          {/* Hide cart for admin */}
+          {!admin && (
+            <Link to="/cart" className="relative">
+              <ShoppingCart />
 
-      {/* Hide cart for admin */}
-      {!admin && (
-        <Link to="/cart" className="relative">
-          <ShoppingCart />
+              <span className="bg-indigo-500 rounded-full absolute text-white -top-3 -right-5 px-2">
+                {cart?.items?.length || 0}
+              </span>
+            </Link>
+          )}
 
-          <span className="bg-indigo-500 rounded-full absolute text-white -top-3 -right-5 px-2">
-            {cart?.items?.length || 0}
-          </span>
-        </Link>
-      )}
-
-      {user ? (
-        <Button
-          onClick={logoutHandler}
-          className="bg-indigo-500 text-white cursor-pointer p-5 text-xl"
-        >
-          Logout
-        </Button>
-      ) : (
-        <Button
-          onClick={() => navigate("/login")}
-          className="bg-linear-to-tl from-blue-600 to-cyan-600 text-white cursor-pointer p-5 text-xl"
-        >
-          Login
-        </Button>
-      )}
-
-    </nav>
-  </div>
-</header>
+          {user ? (
+            <Button
+              onClick={logoutHandler}
+              className="bg-indigo-500 text-white cursor-pointer p-5 text-xl"
+            >
+              Logout
+            </Button>
+          ) : (
+            <Button
+              onClick={() => navigate("/login")}
+              className="bg-linear-to-tl from-blue-600 to-cyan-600 text-white cursor-pointer p-5 text-xl"
+            >
+              Login
+            </Button>
+          )}
+        </nav>
+      </div>
+    </header>
   );
 };
 

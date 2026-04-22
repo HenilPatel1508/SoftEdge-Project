@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ShoppingCart, Trash, Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { setCart } from "@/redux/productSlice";
 import { toast } from "sonner";
@@ -20,21 +20,22 @@ const Cart = () => {
 
   const accessToken = localStorage.getItem("accessToken");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const loadCart = async()=>{
+  const loadCart = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/v1/cart/`,{
-        headers:{
-          Authorization:`Bearer ${accessToken}`
-        }
-      })
+      const res = await axios.get(`http://localhost:3000/api/v1/cart/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       if (res.data.success) {
-        dispatch(setCart(res.data.cart))
+        dispatch(setCart(res.data.cart));
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   const handleUpdateQuantity = async (productId, type) => {
     try {
@@ -58,26 +59,29 @@ const Cart = () => {
     }
   };
 
-  const handleRemove = async(productId)=>{
+  const handleRemove = async (productId) => {
     try {
-      const res = await axios.delete(`http://localhost:3000/api/v1/cart/delete`,{
-        headers:{
-          Authorization:`Bearer ${accessToken}`
+      const res = await axios.delete(
+        `http://localhost:3000/api/v1/cart/delete`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          data: { productId },
         },
-        data:{productId}
-      })
+      );
       if (res.data.success) {
-        dispatch(setCart(res.data.cart||null))
-        toast.success("Product Remove From Cart")
+        dispatch(setCart(res.data.cart || null));
+        toast.success("Product Remove From Cart");
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
-  useEffect(()=>{
-    loadCart()
-  },[dispatch])
+  useEffect(() => {
+    loadCart();
+  }, [dispatch]);
   return (
     <div className="pt-30 bg-gray-50 ">
       {cart?.items?.length > 0 ? (
@@ -132,7 +136,10 @@ const Cart = () => {
                       <p>
                         ₹{product?.productId?.productPrice * product?.quantity}
                       </p>
-                      <p onClick={()=>handleRemove(product?.productId?._id)} className="flex text-red-500 items-center justify-center gap-2 cursor-pointer">
+                      <p
+                        onClick={() => handleRemove(product?.productId?._id)}
+                        className="flex text-red-500 items-center justify-center gap-2 cursor-pointer"
+                      >
                         <Trash color="#cd3232" />
                         Remove
                       </p>
@@ -152,7 +159,7 @@ const Cart = () => {
                       Subtotal ({cart?.items?.length}items)
                     </span>
                     <span className="text-lg">
-                      ₹{cart?.totalPrice?.toLocaleString('en-IN')}
+                      ₹{cart?.totalPrice?.toLocaleString("en-IN")}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -168,7 +175,10 @@ const Cart = () => {
                     <span>Total</span>
                     <span>₹{total}</span>
                   </div>
-                  <Button className="w-full bg-indigo-500 hover:bg-indigo-700 hover:scale-105 text-xl">
+                  <Button
+                    onClick={() => navigate('/address')}
+                    className="w-full bg-indigo-500 hover:bg-indigo-700 hover:scale-105 text-xl"
+                  >
                     Place Order
                   </Button>
                   <Button variant="outline" className="w-full bg-transparent">

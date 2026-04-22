@@ -20,6 +20,7 @@ import ShowUserOrders from './pages/Admin/ShowUserOrders'
 import AdminUsers from './pages/Admin/AdminUsers'
 import UserInfo from './pages/Admin/UserInfo'
 import ProtectedRoutes from './components/ProtectedRoutes'
+import AddressForm from './pages/AddressForm'
 
 
 const router = createBrowserRouter([
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
   {
     path:'/cart',
     element:<ProtectedRoutes><Navbar/><Cart/></ProtectedRoutes>
+  },
+  {
+    path:'/address',
+    element:<ProtectedRoutes><AddressForm/></ProtectedRoutes>
   },
   {
     path:'/dashboard',

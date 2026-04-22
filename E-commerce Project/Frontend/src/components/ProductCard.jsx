@@ -54,7 +54,7 @@ const ProductCard = ({ product, loading }) => {
         </div>
       ) : (
         <div className="px-2 space-y-1 pt-2">
-          <h1 className="font-semibold h-10 line-clamp-2">{productName}</h1>
+          <h1 className="font-semibold line-clamp-2">{productName}</h1>
           <h2 className="font-bold">₹{productPrice}</h2>
           <Button onClick={()=>addToCart(product._id)} className="bg-indigo-400 mb-3 w-full hover:bg-indigo-600">
             <ShoppingCart />

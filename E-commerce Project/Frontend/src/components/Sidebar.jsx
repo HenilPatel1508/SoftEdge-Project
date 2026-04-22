@@ -86,7 +86,7 @@ const Sidebar = () => {
         <NavLink
           onClick={logoutHandler}
           className={({ isActive }) =>
-            `text-xl ${isActive ? "bg-red-500 text-black" : "bg-transparent"} flex items-center font-bold gap-2 cursor-pointer p-3 rounded-2xl w-full `
+            `  text-xl ${isActive ? "bg-red-500 text-black" : "bg-transparent"} flex items-center font-bold gap-2 cursor-pointer p-3 rounded-2xl w-full `
           }
         >
           <LogOut />

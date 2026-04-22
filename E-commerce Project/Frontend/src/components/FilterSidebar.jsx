@@ -46,7 +46,7 @@ const FilterSidebar = ({
   console.log(UniqueBrands);
 
   return (
-    <div className="bg-gray-100 mt-10 p-4 rounded-md h-max hidden md:block w-64">
+    <div className="bg-gray-100 ml-10 mt-2 p-4 rounded-md h-max hidden md:block w-64">
       {/* Search */}
       <input
         type="text"

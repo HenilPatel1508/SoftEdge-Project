@@ -4,8 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <section className=" bg-[url('/hero.jpg')] bg-cover bg-center h-screen  text-white py-52">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className=" bg-[url('/hero.jpg')] bg-cover bg-center h-screen text-white py-52">
+      <div className="max-w-7xl mx-auto px-10">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h1 className="text-4xl md:text-6xl text-black font-bold mb-4">
