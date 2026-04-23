@@ -8,7 +8,7 @@ import Login from './pages/Login'
 import Verify from './pages/Verify'
 import VerifyEmail from './pages/VerifyEmail'
 import Footer from './components/Footer'
-import Profile from './pages/Profile'
+// import Profile from './pages/Profile'
 import Products from './pages/Products'
 import Cart from './pages/Cart'
 import Dashboard from './pages/Dashboard'
@@ -21,6 +21,8 @@ import AdminUsers from './pages/Admin/AdminUsers'
 import UserInfo from './pages/Admin/UserInfo'
 import ProtectedRoutes from './components/ProtectedRoutes'
 import AddressForm from './pages/AddressForm'
+import OrderSuccess from './pages/OrderSuccess'
+import MyOrder from './pages/Profile'
 
 
 const router = createBrowserRouter([
@@ -45,8 +47,8 @@ const router = createBrowserRouter([
     element:<><VerifyEmail/></>
   },
   {
-    path:'/profile',
-    element:<ProtectedRoutes><Navbar/><Profile/></ProtectedRoutes>
+    path:'/order',
+    element:<ProtectedRoutes><Navbar/><MyOrder/></ProtectedRoutes>
   },
   {
     path:'/products',
@@ -59,6 +61,10 @@ const router = createBrowserRouter([
   {
     path:'/address',
     element:<ProtectedRoutes><AddressForm/></ProtectedRoutes>
+  },
+  {
+    path:'/order-success',
+    element:<ProtectedRoutes><OrderSuccess/></ProtectedRoutes>
   },
   {
     path:'/dashboard',

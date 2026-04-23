@@ -4,15 +4,21 @@ import { Input } from "@/components/ui/input";
 import {
   addAddress,
   deleteAddress,
+  setCart,
   setSelectedAddress,
 } from "@/redux/productSlice";
 import store from "@/redux/store";
 import { Separator } from "@base-ui/react";
+import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+// import Products from "./Products";
 
 const AddressForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
@@ -42,6 +48,112 @@ const AddressForm = () => {
   const shipping = subtotal > 50 ? 0 : 10;
   const tax = parseFloat((subtotal * 0.05).toFixed(2));
   const total = subtotal + shipping + tax;
+
+  const handlePayment = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_URL}/api/v1/order/create-order`,
+        {
+          products: cart?.items?.map((item) => ({
+            productId: item.productId._id,
+            quantity: item.quantity,
+          })),
+          tax,
+          shipping,
+          amount: total,
+          currency: "INR",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      if (!data.success) return toast.error("Something went wrong");
+
+      console.log("Razorpay Data : ", data);
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: data.order.amount,
+        currency: data.order.currency,
+        order_id: data.order.id,
+        name: "E-commerce",
+        description: "Order Payment",
+        handler: async function (response) {
+          try {
+            const verifyres = await axios.post(
+              `${import.meta.env.VITE_URL}/api/v1/order/verify-payment`,
+              response,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              },
+            );
+            if (verifyres.data.success) {
+              toast.success("✅ Payment Successfull!");
+              dispatch(setCart({ items: [], totalPrice: 0 }));
+              navigate("/order-success");
+            } else {
+              toast.error("❌Payment Verification Failed");
+            }
+          } catch (error) {
+            toast.error("Error Verifying payment");
+          }
+        },
+        modal: {
+          ondismiss: async function () {
+            //Handler user closing the Popup
+            await axios.post(
+              `${import.meta.env.VITE_URL}/api/v1/order/verify-payment`,
+              {
+                razorpay_order_id: data.order.id,
+                paymentFailed: true,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              },
+            );
+            toast.error("Payment Cancelled or Failed");
+          },
+        },
+        prefill: {
+          name: formData.fullName,
+          email: formData.email,
+          contact: formData.phone,
+        },
+        theme: {
+          color: "#F472B6",
+        },
+      };
+      const rzp = new window.Razorpay(options);
+
+      //Listen for payment failures
+      rzp.on("payment.failed", async function (response) {
+        await axios.post(
+          `${import.meta.env.VITE_URL}/api/v1/order/create-order`,
+          {
+            razorpay_order_id: data.order.id,
+            paymentFailed: true,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+        toast.error("Payment Failed.Please Try Again")
+      });
+      rzp.open()
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong while processing payment");
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto h-screen grid place-items-center p-5">
@@ -189,6 +301,7 @@ const AddressForm = () => {
                 + Add New Address
               </Button>
               <Button
+              onClick={handlePayment}
                 disabled={selectedAddress === null}
                 className="w-full bg-pink-600"
               >
@@ -199,7 +312,7 @@ const AddressForm = () => {
         </div>
         {/* Right Side Order Summary */}
         <div>
-          <Card className="w-[400px] mt-15">
+          <Card className="w-100 mt-15">
             <CardHeader>
               <CardTitle>Order Summary</CardTitle>
             </CardHeader>

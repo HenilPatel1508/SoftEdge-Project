@@ -6,6 +6,7 @@ import userRoutes from './routes/userRoutes.js'
 import cors from 'cors'
 import productRoute from './routes/productRoutes.js'
 import cartRoute from './routes/cartRoutes.js'
+import orderRoute from './routes/orderRoutes.js'
 
 const app = express()
 
@@ -19,11 +20,10 @@ app.use(cors({
     credentials:true
 }))
 
-
 app.use('/api/v1/user',userRoutes)
 app.use('/api/v1/product',productRoute)
 app.use('/api/v1/cart',cartRoute)
-
+app.use('/api/v1/order',orderRoute)
 
 app.get('/', (req, res) => res.send('Hello World!'))
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

@@ -64,7 +64,7 @@ const Navbar = () => {
                 </Link>
 
                 {user && (
-                  <Link to="/profile">
+                  <Link to="/order">
                     <li>Hello, {user.firstname}</li>
                   </Link>
                 )}
