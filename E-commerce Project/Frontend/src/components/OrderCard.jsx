@@ -9,7 +9,6 @@ const OrderCard = ({ userOrder }) => {
   return (
     <div className="flex flex-col items-center pt-20">
       <div className="w-170 ml-40 max-w-4xl p-6">
-        
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Button onClick={() => navigate(-1)}>
@@ -20,18 +19,14 @@ const OrderCard = ({ userOrder }) => {
 
         {/* No Orders */}
         {userOrder?.length === 0 ? (
-          <p className="text-gray-800 text-xl">
-            No Order Found For this user
-          </p>
+          <p className="text-gray-800 text-xl">No Order Found For this user</p>
         ) : (
           <div className="flex flex-col gap-6">
-            
             {userOrder?.map((order) => (
               <div
                 key={order._id}
                 className="shadow-md rounded-2xl p-5 border bg-white"
               >
-                
                 {/* Order Header */}
                 <div className="flex flex-col gap-2 mb-4">
                   <h2 className="text-md font-semibold">
@@ -67,8 +62,8 @@ const OrderCard = ({ userOrder }) => {
                       order.status === "Paid"
                         ? "bg-green-500"
                         : order.status === "Failed"
-                        ? "bg-red-500"
-                        : "bg-orange-400"
+                          ? "bg-red-500"
+                          : "bg-orange-400"
                     }`}
                   >
                     {order.status}
@@ -111,10 +106,15 @@ const OrderCard = ({ userOrder }) => {
                     ))}
                   </div>
                 </div>
-
+                <a
+                  href={`${import.meta.env.VITE_URL}/api/v1/invoice/${order._id}`}
+                  target="_blank"
+                  className="text-black  mt-2 inline-block"
+                >
+                  Download Invoice
+                </a>
               </div>
             ))}
-
           </div>
         )}
       </div>
