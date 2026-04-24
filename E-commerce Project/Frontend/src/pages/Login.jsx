@@ -56,7 +56,7 @@ const Login = () => {
         localStorage.setItem("accessToken", res.data.token);
         // Direct admin redirect
         if (res.data.user.role === "admin") {
-          navigate("/dashboard"); // or /dashboard
+          navigate("/dashboard/sales"); // or /dashboard
         } else {
           navigate("/");
         }

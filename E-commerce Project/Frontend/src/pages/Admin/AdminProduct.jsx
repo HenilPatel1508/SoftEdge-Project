@@ -199,7 +199,7 @@ const AdminProduct = () => {
                       />
                     }
                   />
-                  <DialogContent className="sm:max-w-2xl max-h-[730px] overflow-y-scroll">
+                  <DialogContent className="sm:max-w-2xl max-h-[430px] overflow-y-scroll">
                     <DialogHeader>
                       <DialogTitle className={"text-2xl text-bold"}>
                         Edit Product

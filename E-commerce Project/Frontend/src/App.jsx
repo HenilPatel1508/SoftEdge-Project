@@ -101,13 +101,6 @@ const router = createBrowserRouter([
     ]
   },
 ])
-// const admin = user?.role === "admin" ? true : false;
-// {admin && (
-//               <Link to={"/dashboard"}>
-//                 <li>Dashboard</li>
-//               </Link>
-//             )}
-
 
 const App = () => {
 

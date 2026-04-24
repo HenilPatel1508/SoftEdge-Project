@@ -31,6 +31,7 @@ const Navbar = () => {
       if (res.data.success || res.data.message) {
         dispatch(setUser(res.data.user));
         toast.success(res.data.message);
+        navigate("/")
       }
     } catch (error) {
       console.log(error);
@@ -87,6 +88,7 @@ const Navbar = () => {
             <Button
               onClick={logoutHandler}
               className="bg-indigo-500 text-white cursor-pointer p-5 text-xl"
+              
             >
               Logout
             </Button>

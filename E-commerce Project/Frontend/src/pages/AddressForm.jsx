@@ -293,20 +293,7 @@ const AddressForm = () => {
                   );
                 })}
               </div>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => setShowForm(true)}
-              >
-                + Add New Address
-              </Button>
-              <Button
-              onClick={handlePayment}
-                disabled={selectedAddress === null}
-                className="w-full bg-pink-600"
-              >
-                Proceed to CheckOut
-              </Button>
+              
             </div>
           )}
         </div>
@@ -338,6 +325,20 @@ const AddressForm = () => {
                 <p>* Free Shipping on order over 299</p>
                 <p>* 30 Days Return Policy</p>
               </div>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setShowForm(true)}
+              >
+                + Add New Address
+              </Button>
+              <Button
+              onClick={handlePayment}
+                disabled={selectedAddress === null}
+                className="w-full bg-pink-600"
+              >
+                Proceed to CheckOut
+              </Button>
             </CardContent>
           </Card>
         </div>

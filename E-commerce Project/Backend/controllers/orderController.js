@@ -4,6 +4,9 @@ import razorpayInstance from "../config/razorpay.js";
 import { Cart } from "../models/cartModel.js";
 import { Order } from "../models/orderModel.js";
 import crypto from "crypto";
+import  User  from "../models/userModel.js";
+import { Product } from "../models/productModel.js";
+import { format } from "path";
 
 export const createOrder = async (req, res) => {
   try {
@@ -93,26 +96,124 @@ export const verifyPayment = async (req, res) => {
         .json({ success: false, message: "Invalid Signature" });
     }
   } catch (error) {
-    console.error("❌Error in Verify Payment :",error);
-    res.status(500).json({success:false,message:error.message})
-    
+    console.error("❌Error in Verify Payment :", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-export const getMyOrder = async(req,res)=>{
+export const getMyOrder = async (req, res) => {
   try {
     const userId = req.id;
-    const orders = await Order.find({user:userId})
-    .populate({path:"products.productId",select:"productName productPrice productImg"})
-    .populate("user","firstname lastname email")
+    const orders = await Order.find({ user: userId })
+      .populate({
+        path: "products.productId",
+        select: "productName productPrice productImg",
+      })
+      .populate("user", "firstname lastname email");
 
     res.status(200).json({
-      success:true,
-      count:orders.length,
+      success: true,
+      count: orders.length,
       orders,
-    })
+    });
   } catch (error) {
-    console.error("Error Fetching User Orders : ",error);
-    res.status(500).json({message:error.message})
+    console.error("Error Fetching User Orders : ", error);
+    res.status(500).json({ message: error.message });
   }
-}
+};
+
+//Get All USer Order Admin Only
+
+export const getAllUserOrder = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const orders = await Order.find({ user: userId })
+      .populate({
+        path: "products.productId",
+        select: "productName productPrice productImg",
+      })
+      .populate("user", "firstname lastname email");
+
+    res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.log("Error fetching User Order : ", error);
+    res.status(500).json({ message: error });
+  }
+};
+
+export const getAllOrderAdmin = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .sort({ createdAt: -1 })
+      .populate("user", "name email")
+      .populate("products.productId", "productName productPrice");
+    res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.log("Error fetching All Order : ", error);
+    res.status(500).json({ message: error });
+  }
+};
+
+export const getSalesData = async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments({role:"user"});
+    const totalProducts = await Product.countDocuments({});
+    const totalOrders = await Order.countDocuments({ status: "Paid" });
+
+    // Total Sales Amount
+    const totalSaleAggr = await Order.aggregate([
+      { $match: { status: "Paid" } },
+      { $group: { _id: null, total: { $sum: "$amount" } } },
+    ]);
+    const totalSales = totalSaleAggr[0]?.total || 0;
+
+    //Sales Grouped By Date(last 30 days)
+
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const salesByDate = await Order.aggregate([
+      { $match: { status: "Paid", createdAt: { $gte: thirtyDaysAgo } } },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+          },
+          amount: { $sum: "$amount" },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+    console.log(salesByDate);
+    
+    const formatedSales = salesByDate.map((item)=>({
+      date:item._id,
+      amount:item.amount
+    }))
+    console.log(formatedSales);
+    res.json({
+      success:true,
+      totalUsers,
+      totalProducts,
+      totalOrders,
+      totalSales,
+      sales:formatedSales
+    })
+    
+  } catch (error) {
+    console.log("Error fetching sales data :",error);
+    res.status(500).json({
+      success:false,
+      message:error.message
+    })
+    
+  }
+};
