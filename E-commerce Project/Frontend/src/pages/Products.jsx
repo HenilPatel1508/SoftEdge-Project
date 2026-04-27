@@ -30,7 +30,7 @@ const Products = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `http://localhost:3000/api/v1/product/getAllProduct`,
+        `${import.meta.env.VITE_URL}/api/v1/product/getAllProduct`,
       );
       if (res.data.success) {
         setAllProducts(res.data.products);
