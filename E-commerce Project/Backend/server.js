@@ -14,6 +14,12 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 connectDB();
+
+app.use(express.static("dist"));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve("dist", "index.html"));
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
