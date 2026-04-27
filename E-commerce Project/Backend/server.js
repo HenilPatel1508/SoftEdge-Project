@@ -17,8 +17,8 @@ connectDB();
 
 app.use(express.static("dist"));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve("dist", "index.html"));
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
 });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
