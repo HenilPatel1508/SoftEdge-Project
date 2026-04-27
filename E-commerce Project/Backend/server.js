@@ -15,11 +15,6 @@ const port = process.env.PORT || 4000;
 
 connectDB();
 
-app.use(express.static("dist"));
-
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
