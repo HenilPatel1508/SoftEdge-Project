@@ -17,7 +17,7 @@ createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <App />
-        <Toaster className={"text-green-400"} />
+        <Toaster className={"text-green-800"} />
       </PersistGate>
     </Provider>
   </StrictMode>,
