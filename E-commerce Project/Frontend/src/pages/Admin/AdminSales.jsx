@@ -79,7 +79,7 @@ const AdminSales = () => {
         </CardHeader>
         <CardContent style={{height:300}}>
           <ResponsiveContainer width="100%" height="100%">
-             <AreaChart data={state.sales}>
+             <AreaChart data={state.orders}>
              <XAxis dataKey="date"/>
              <YAxis/>
              <Tooltip/>
