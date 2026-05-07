@@ -7,7 +7,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [AuthModule, UserModule,ConfigModule.forRoot(),MongooseModule.forRoot(process.env.MONGO_URL as string)],
+  imports: [
+    AuthModule,
+    UserModule,
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGO_URL as string),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
