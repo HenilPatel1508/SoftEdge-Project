@@ -25,4 +25,10 @@ export class UserService {
       throw err;
     }
   }
+  async findByEmail(email: string) {
+    return await this.UserModel.findOne({ email });
+  }
+  async getUserById(id:string){
+    return await this.UserModel.findOne({_id :id})
+  }
 }

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { RegisterDto } from './dto/registerUser.dto';
 import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './dto/loginUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,4 +29,32 @@ export class AuthService {
     console.log('token :', token);
     return { access_token: token };
   }
+
+ async loginUser(loginDto: LoginDto) {
+  const user = await this.userService.findByEmail(loginDto.email);
+
+  if (!user) {
+    throw new UnauthorizedException('Invalid Email or Password');
+  }
+
+  const isPasswordMatched = await bcrypt.compare(
+    loginDto.password,
+    user.password,
+  );
+
+  if (!isPasswordMatched) {
+    throw new UnauthorizedException('Invalid Email or Password');
+  }
+
+  const payload = { sub: user._id };
+
+  const token = await this.jwtService.signAsync(payload);
+
+  const response = {"message": "Login Success ", "user": user, "access_token": token };
+
+  console.log('LOGIN USER:', user.email);
+  console.log('TOKEN GENERATED:', token);
+
+  return response;
+}
 }
