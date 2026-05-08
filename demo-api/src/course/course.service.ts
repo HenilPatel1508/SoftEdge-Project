@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { Course } from './schemas/course.schemas';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class CourseService {
+  constructor(@InjectModel(Course.name) private CourseModel: Model <Course>) {}
   create(createCourseDto: CreateCourseDto) {
     return 'This action adds a new course';
   }
