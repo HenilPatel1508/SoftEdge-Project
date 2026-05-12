@@ -12,11 +12,21 @@ const MessageBubble = ({ message, own }) => {
             : "bg-gray-700 rounded-bl-none"
         }`}
       >
-        <p className="text-sm">{message.message}</p>
+        <p>{message.message}</p>
 
-        <div className="text-[10px] text-right mt-1 text-gray-300">
-          {message.time}
+        <div className="flex justify-end items-center gap-1 text-[10px] mt-1 text-gray-300">
+
+          <span>{message.time}</span>
+
+          {/* Seen ticks */}
+          {own && (
+            <span className="ml-2">
+              {message.seen ? "✓✓" : "✓"}
+            </span>
+          )}
+
         </div>
+
       </div>
     </div>
   );
