@@ -14,10 +14,10 @@ async function startApp() {
     try {
         // Create User
         const newUser = await UserService.call("user.createUser", {
-            username: "Dhruv Patel",
-            email: "dhruv10@gmail.com",
+            username: "Happy Singh",
+            email: "happy150804@gmail.com",
         });
-
+        
         console.log("New User Created:", newUser);
 
         // Get Users
