@@ -36,39 +36,45 @@ const ProductCard = ({ product, loading }) => {
   };
 
   return (
-  <div className="group bg-white shadow-md rounded-xl overflow-hidden h-50 relative hover:shadow-xl transition-all duration-300">
+  <div className="group relative overflow-hidden rounded-2xl h-64 bg-gradient-to-br from-white via-indigo-50 to-purple-100 shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/40 backdrop-blur-md">
+
+    {/* Background Glow */}
+    <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-300/30 rounded-full blur-3xl"></div>
+    <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-pink-300/30 rounded-full blur-3xl"></div>
 
     {/* IMAGE */}
-    <div className="w-full h-full overflow-hidden bg-gray-100">
+    <div className="w-full h-full overflow-hidden relative">
       {loading ? (
         <Skeleton className="w-full h-full" />
       ) : (
         <img
           src={productImg?.[0]?.url}
           alt={productName}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
       )}
     </div>
 
-    {/* HOVER OVERLAY */}
+    {/* Overlay */}
     {!loading && (
-      <div className="absolute inset-0 bg-black/70 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div className="translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
-          
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-all duration-500">
+        <div className="translate-y-10 group-hover:translate-y-0 transition-transform duration-500">
+
           <h1 className="text-white text-sm font-semibold line-clamp-2">
             {productName}
           </h1>
 
-          <p className="text-gray-300 text-xs mt-1">{brand}</p>
+          <p className="text-gray-300 text-xs mt-1">
+            {brand}
+          </p>
 
-          <h2 className="text-xl font-bold text-white mt-2">
+          <h2 className="text-2xl font-bold text-indigo-300 mt-2">
             ₹{productPrice}
           </h2>
 
           <Button
             onClick={() => addToCart(product._id)}
-            className="mt-3 w-full flex items-center justify-center gap-2 bg-indigo-500 hover:bg-indigo-600"
+            className="mt-3 w-full flex items-center justify-center gap-2 bg-indigo-500 hover:bg-indigo-600 rounded-xl"
           >
             <ShoppingCart size={18} />
             Add To Cart

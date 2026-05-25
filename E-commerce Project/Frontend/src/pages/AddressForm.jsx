@@ -273,7 +273,7 @@ const AddressForm = () => {
                     <div
                       key={index}
                       onClick={() => dispatch(setSelectedAddress(index))}
-                      className={`border  p-4 rounded-md cursor-pointer relative ${selectedAddress === index ? "border-pink-100 bg-pink-50" : "border-gray-300"}`}
+                      className={`border  p-4 rounded-md cursor-pointer relative ${selectedAddress === index ? "border-pink-100 bg-indigo-50" : "border-gray-300"}`}
                     >
                       <p className="font-medium">{addr.fullName}</p>
                       <p>{addr.phone}</p>
@@ -335,7 +335,7 @@ const AddressForm = () => {
               <Button
               onClick={handlePayment}
                 disabled={selectedAddress === null}
-                className="w-full bg-pink-600"
+                className="w-full bg-indigo-500 hover:bg-indigo-700 hover:scale-105 text-xl"
               >
                 Proceed to CheckOut
               </Button>
