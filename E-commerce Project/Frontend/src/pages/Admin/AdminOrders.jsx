@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -31,31 +32,37 @@ const AdminOrders = () => {
   }, [accessToken]);
 
   const deleteOrder = async (orderId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this order?",
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this order?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    const { data } = await axios.delete(
+      `${import.meta.env.VITE_URL}/api/v1/order/delete/${orderId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
 
-    if (!confirmDelete) return;
+    if (data.success) {
+      setOrders(orders.filter((order) => order._id !== orderId));
 
-    try {
-      const { data } = await axios.delete(
-        `${import.meta.env.VITE_URL}/api/v1/order/delete/${orderId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-
-      if (data.success) {
-        setOrders(orders.filter((order) => order._id !== orderId));
-        alert("Order deleted successfully");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Failed to delete order");
+      toast.success("🗑️ Order Deleted", {
+        description: "The order has been permanently removed.",
+      });
     }
-  };
+  } catch (error) {
+    console.error(error);
+
+    toast.error("Delete Failed", {
+      description: "Something went wrong while deleting the order.",
+    });
+  }
+};
 
   if (loading) {
     return (
