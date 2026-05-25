@@ -41,7 +41,7 @@ const AdminOrders = () => {
 
   return (
   <div className="flex-1 p-8 bg-slate-100 ml-70 overflow-auto">
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       
       {/* Header */}
       <div className="backdrop-blur-xl bg-white/70 border border-white/40 shadow-xl rounded-3xl p-6 mb-8">
