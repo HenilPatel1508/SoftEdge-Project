@@ -32,36 +32,45 @@ const AdminOrders = () => {
   }, [accessToken]);
 
   const deleteOrder = async (orderId) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this order?"
-  );
+  toast("Delete this order?", {
+    description: "This action cannot be undone.",
+    action: {
+      label: "Delete",
+      onClick: async () => {
+        try {
+          const { data } = await axios.delete(
+            `${import.meta.env.VITE_URL}/api/v1/order/delete/${orderId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
 
-  if (!confirmDelete) return;
+          if (data.success) {
+            setOrders(
+              orders.filter((order) => order._id !== orderId)
+            );
 
-  try {
-    const { data } = await axios.delete(
-      `${import.meta.env.VITE_URL}/api/v1/order/delete/${orderId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+            toast.success("🗑️ Order Deleted", {
+              description:
+                "The order has been permanently removed.",
+            });
+          }
+        } catch (error) {
+          console.error(error);
 
-    if (data.success) {
-      setOrders(orders.filter((order) => order._id !== orderId));
-
-      toast.success("🗑️ Order Deleted", {
-        description: "The order has been permanently removed.",
-      });
-    }
-  } catch (error) {
-    console.error(error);
-
-    toast.error("Delete Failed", {
-      description: "Something went wrong while deleting the order.",
-    });
-  }
+          toast.error("Delete Failed", {
+            description:
+              "Something went wrong while deleting the order.",
+          });
+        }
+      },
+    },
+    cancel: {
+      label: "Cancel",
+    },
+  });
 };
 
   if (loading) {
