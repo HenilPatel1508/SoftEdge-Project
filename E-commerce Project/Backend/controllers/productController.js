@@ -106,31 +106,67 @@ export const addProduct = async (req, res) => {
   }
 };
 
-export const getAllProduct = async (_, res) => {
+// export const getAllProduct = async (_, res) => {
+//   try {
+//     const products = await Product.find();
+//     if (!products) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "No Product Available",
+//         products: [],
+//       });
+//     }
+//     return res.status(200).json({
+//       success: true,
+//       products,
+//     });
+//   } catch (error) {
+//     return (
+//       res.status(500),
+//       json({
+//         success: false,
+//         message: error.message,
+//       })
+//     );
+//   }
+// };
+
+
+export const getAllProduct = async (req, res) => {
   try {
-    const products = await Product.find();
-    if (!products) {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
+    const totalProducts = await Product.countDocuments();
+
+    const products = await Product.find()
+      .skip(skip)
+      .limit(limit);
+
+    if (!products.length) {
       return res.status(404).json({
         success: false,
         message: "No Product Available",
         products: [],
       });
     }
+
     return res.status(200).json({
       success: true,
       products,
+      currentPage: page,
+      totalPages: Math.ceil(totalProducts / limit),
+      totalProducts,
     });
   } catch (error) {
-    return (
-      res.status(500),
-      json({
-        success: false,
-        message: error.message,
-      })
-    );
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
-
 export const deleteProduct = async (req,res) => {
   try {
     const { productId } = req.params;
