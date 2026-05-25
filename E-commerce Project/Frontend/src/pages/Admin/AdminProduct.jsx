@@ -148,23 +148,30 @@ const AdminProduct = () => {
   }
 
   return (
-    <div className="pl-[350px] py-20 pr-20 flex flex-col gap-3 min-h-screen bg-gray-100">
-      <div className="flex justify-between">
-        <div className="relative bg-white rounded-lg">
+  <div className="flex-1 p-8 bg-slate-100 ml-75">
+    
+    {/* Top Section */}
+    <div className="backdrop-blur-xl bg-white/60 border border-white/40 shadow-xl rounded-3xl p-6 mb-8">
+      <div className="flex justify-between items-center gap-4">
+        
+        {/* Search */}
+        <div className="relative w-[420px]">
           <Input
             type="text"
             value={searchterm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search Product......"
-            className="w-[400px] p-5 placeholder:text-lg items-center"
+            placeholder="Search Products..."
+            className="w-full h-14 pl-5 pr-12 rounded-2xl bg-white/70 border-white/40 shadow-md"
           />
-          <Search className="absolute right-3 top-1.5 text-gray-500" />
+          <Search className="absolute right-4 top-4 text-slate-500" />
         </div>
-        <Select onValueChange={(value)=>setSortOrder(value)}>
-          <SelectTrigger className="w-[280px] bg-white p-5 text-md">
+
+        {/* Sort */}
+        <Select onValueChange={(value) => setSortOrder(value)}>
+          <SelectTrigger className="w-[260px] h-14 rounded-2xl bg-white/70 border-white/40 shadow-md">
             <SelectValue placeholder="Sort By Price" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="rounded-2xl">
             <SelectGroup>
               <SelectItem value="Low To High">Low To High</SelectItem>
               <SelectItem value="High To Low">High To Low</SelectItem>
@@ -172,160 +179,68 @@ const AdminProduct = () => {
           </SelectContent>
         </Select>
       </div>
+    </div>
+
+    {/* Products */}
+    <div className="grid gap-5">
       {filterdProduct.map((product, index) => {
         return (
-          <Card key={index} className="px-4">
+          <Card
+            key={index}
+            className="backdrop-blur-xl bg-white/65 border border-white/40 shadow-xl rounded-3xl p-5 hover:shadow-2xl transition-all"
+          >
             <div className="flex items-center justify-between">
-              <div className="flex gap-2 items-center">
+
+              {/* Product Info */}
+              <div className="flex items-center gap-5">
                 <img
                   src={product.productImg[0].url}
                   alt=""
-                  className="w-25 h-25"
+                  className="w-24 h-24 object-cover rounded-2xl shadow-lg"
                 />
-                <h1 className="font-bold text-lg p-5 w-96 text-gray-600">
-                  {product.productName}
-                </h1>
-              </div>
-              <h1 className="font-bold text-lg">₹{product.productPrice}</h1>
-              <div className="flex gap-3 cursor-pointer">
-                <Dialog open={open} onOpenChange={setOpen}>
-                  <DialogTrigger
-                    render={
-                      <Edit
-                        onClick={() => {
-                          (setOpen(true), setEditProduct(product));
-                        }}
-                        className="text-green-500"
-                      />
-                    }
-                  />
-                  <DialogContent className="sm:max-w-2xl max-h-[430px] overflow-y-scroll">
-                    <DialogHeader>
-                      <DialogTitle className={"text-2xl text-bold"}>
-                        Edit Product
-                      </DialogTitle>
-                      <DialogDescription className={"text-xl"}>
-                        Make changes to your product here. Click save when
-                        you&apos;re done.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <FieldGroup>
-                      <div className="flex flex-col gap-2">
-                        <Field className={"grid gap-2"}>
-                          <Label className={"text-xl text-semibold"}>
-                            Product Name
-                          </Label>
-                          <Input
-                            type="text"
-                            value={editProduct?.productName}
-                            onChange={handleChange}
-                            name="productName"
-                            placeholder="Ex-T-shirt"
-                            required
-                          />
-                        </Field>
-                        <Field className={"grid gap-2"}>
-                          <Label className={"text-xl text-semibold"}>
-                            Price
-                          </Label>
-                          <Input
-                            type="number"
-                            value={editProduct?.productPrice}
-                            onChange={handleChange}
-                            name="productPrice"
-                            placeholder="Ex-200"
-                            required
-                          />
-                        </Field>
-                        <div className="grid grid-cols-2 gap-4">
-                          <Field className={"grid gap-2"}>
-                            <Label className={"text-xl text-semibold"}>
-                              Brand
-                            </Label>
-                            <Input
-                              type="text"
-                              name="brand"
-                              value={editProduct?.brand}
-                              onChange={handleChange}
-                              placeholder="Ex-Puma"
-                              required
-                            />
-                          </Field>
-                          <Field className={"grid gap-2"}>
-                            <Label className={"text-xl text-semibold"}>
-                              Category
-                            </Label>
-                            <Input
-                              type="text"
-                              name="category"
-                              value={editProduct?.category}
-                              onChange={handleChange}
-                              placeholder="Ex-Shirt"
-                              required
-                            />
-                          </Field>
-                        </div>
-                        <div className="grid gap-2">
-                          <div className="flex items-center">
-                            <Label className={"text-xl text-semibold"}>
-                              Product Description
-                            </Label>
-                            <Textarea
-                              name="productDesc"
-                              value={editProduct?.productDesc}
-                              onChange={handleChange}
-                              placeholder="Enter Brief Description of Product"
-                            />
-                          </div>
-                          <ImageUpload
-                            productData={editProduct}
-                            setProductData={setEditProduct}
-                          />
-                        </div>
-                      </div>
-                    </FieldGroup>
-                    <DialogFooter>
-                      <DialogClose
-                        render={<Button variant="outline">Cancel</Button>}
-                      />
-                      <Button onClick={handleSave} type="submit">
-                        Save changes
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
 
-                <AlertDialog>
-                  <AlertDialogTrigger className="cursor-pointer">
-                    <Trash2 color="#cd3232" />
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your account from our servers.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => deleteProductHandler(product._id)}
-                      >
-                        Continue
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <div>
+                  <h1 className="text-xl font-bold text-slate-800">
+                    {product.productName}
+                  </h1>
+                  <p className="text-slate-500 mt-1">
+                    {product.brand} • {product.category}
+                  </p>
+                </div>
+              </div>
+
+              {/* Price */}
+              <h1 className="text-2xl font-bold text-indigo-600">
+                ₹{product.productPrice}
+              </h1>
+
+              {/* Actions */}
+              <div className="flex gap-3">
+                
+                <div className="p-3 rounded-2xl bg-green-100 hover:bg-green-200 cursor-pointer transition">
+                  <Edit
+                    onClick={() => {
+                      setOpen(true);
+                      setEditProduct(product);
+                    }}
+                    className="text-green-600"
+                  />
+                </div>
+
+                <div className="p-3 rounded-2xl bg-red-100 hover:bg-red-200 cursor-pointer transition">
+                  <Trash2
+                    onClick={() => deleteProductHandler(product._id)}
+                    className="text-red-600"
+                  />
+                </div>
               </div>
             </div>
           </Card>
         );
       })}
     </div>
-  );
+  </div>
+);
 };
 
 export default AdminProduct;

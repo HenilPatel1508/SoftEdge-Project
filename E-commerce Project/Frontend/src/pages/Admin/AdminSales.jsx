@@ -1,7 +1,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
+import {
+  Users,
+  Package,
+  ShoppingCart,
+  IndianRupee,
+} from "lucide-react";
 
 const AdminSales = () => {
   const [state, setState] = useState({
@@ -9,89 +23,124 @@ const AdminSales = () => {
     totalProducts: 0,
     totalOrders: 0,
     totalSales: 0,
-    salesByDate: [],
+    sales: [],
   });
+
   const fetchStatus = async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
+
       const res = await axios.get(
         `${import.meta.env.VITE_URL}/api/v1/order/sales`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        },
+        }
       );
+
       if (res.data.success) {
         setState(res.data);
-        console.log(totalUsers);
-        
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(()=>{
-    fetchStatus()
-  },[])
-  return(
-    
-  <div className="pl-[350px] bg-gray-100  pr-20 mx-auto px-4">
-    <div className="p-6 grid gap-6 lg:grid-cols-4">
+  useEffect(() => {
+    fetchStatus();
+  }, []);
+
+  const stats = [
+    {
+      title: "Total Users",
+      value: state.totalUsers,
+      icon: Users,
+    },
+    {
+      title: "Total Products",
+      value: state.totalProducts,
+      icon: Package,
+    },
+    {
+      title: "Total Orders",
+      value: state.totalOrders,
+      icon: ShoppingCart,
+    },
+    {
+      title: "Total Sales",
+      value: `₹${state.totalSales}`,
+      icon: IndianRupee,
+    },
+  ];
+
+  return (
+    <div className="pl-[350px] pr-10 py-8 min-h-screen bg-gradient-to-br from-slate-100 via-pink-50 to-purple-100">
+      <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+        Sales Dashboard
+      </h1>
+
       {/* Stats Cards */}
-      <Card className="bg-indigo-200 text-center text-black shadow">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        {stats.map((item, index) => {
+          const Icon = item.icon;
+          return (
+            <Card
+              key={index}
+              className="backdrop-blur-xl bg-white/40 border border-white/30 shadow-xl rounded-3xl hover:scale-105 transition-all duration-300"
+            >
+              <CardContent className="p-6 flex justify-between items-center">
+                <div>
+                  <p className="text-gray-600 text-sm">{item.title}</p>
+                  <h2 className="text-3xl font-bold text-gray-800 mt-2">
+                    {item.value}
+                  </h2>
+                </div>
+                <div className="bg-pink-500/20 p-4 rounded-2xl">
+                  <Icon className="text-pink-600 w-8 h-8" />
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Sales Chart */}
+      <Card className="mt-8 backdrop-blur-xl bg-white/40 border border-white/30 shadow-xl rounded-3xl">
         <CardHeader>
-          <CardTitle>
-            Total Users
+          <CardTitle className="text-2xl font-bold text-gray-800">
+            Sales Analytics (Last 30 Days)
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-2xl text-center font-bold">{state.totalUsers}</CardContent>
-      </Card>
-      <Card className="bg-indigo-200 text-center text-black shadow">
-        <CardHeader>
-          <CardTitle>
-            Total Products
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl text-center font-bold">{state.totalProducts}</CardContent>
-      </Card>
-      <Card className="bg-indigo-200 text-center text-black shadow">
-        <CardHeader>
-          <CardTitle>
-            Total Orders
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl text-center font-bold">{state.totalOrders}</CardContent>
-      </Card>
-      <Card className="bg-indigo-200 text-black text-center shadow">
-        <CardHeader>
-          <CardTitle>
-            Total Sales
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl text-center font-bold">{state.totalSales}</CardContent>
-      </Card>
-      {/* sales Charts */}
-      <Card className="lg:col-span-4">
-        <CardHeader>
-          <CardTitle>Sales (Last 30 Days)</CardTitle>
-        </CardHeader>
-        <CardContent style={{height:300}}>
+
+        <CardContent className="h-[420px]">
           <ResponsiveContainer width="100%" height="100%">
-             <AreaChart data={state.orders}>
-             <XAxis dataKey="date"/>
-             <YAxis/>
-             <Tooltip/>
-             <Area type="monotone" dataKey="amount" stroke="#F472B6" fill="#F472B6"/>
-             </AreaChart>
+            <AreaChart data={state.sales}>
+              <defs>
+                <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ec4899" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#ec4899" stopOpacity={0.05} />
+                </linearGradient>
+              </defs>
+
+              <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+
+              <Area
+                type="monotone"
+                dataKey="amount"
+                stroke="#ec4899"
+                strokeWidth={3}
+                fill="url(#salesGradient)"
+              />
+            </AreaChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
     </div>
-  </div>
-
-  )
+  );
 };
 
 export default AdminSales;

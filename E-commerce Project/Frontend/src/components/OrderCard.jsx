@@ -1,64 +1,72 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const OrderCard = ({ userOrder }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center pt-20">
-      <div className="w-170 ml-40 max-w-4xl p-6">
+    <div className="min-h-screen pt-24 px-4 md:px-8 bg-gradient-to-br from-indigo-50 via-white to-pink-50 overflow-y-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Button onClick={() => navigate(-1)}>
+        <div className="flex items-center gap-4 mb-8">
+          <Button
+            onClick={() => navigate(-1)}
+            className="bg-indigo-500 hover:bg-indigo-700"
+          >
             <ArrowLeft />
           </Button>
-          <h1 className="text-2xl font-bold">Orders</h1>
+
+          <h1 className="text-3xl font-bold text-gray-800">My Orders</h1>
         </div>
 
         {/* No Orders */}
         {userOrder?.length === 0 ? (
-          <p className="text-gray-800 text-xl">No Order Found For this user</p>
+          <div className="backdrop-blur-md bg-white/80 border border-white/40 shadow-xl rounded-3xl p-10 text-center">
+            <p className="text-gray-700 text-xl font-medium">No Orders Found</p>
+          </div>
         ) : (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-8">
             {userOrder?.map((order) => (
               <div
                 key={order._id}
-                className="shadow-md rounded-2xl p-5 border bg-white"
+                className="backdrop-blur-md bg-white/80 border border-white/40 shadow-xl rounded-3xl p-6 hover:shadow-2xl transition-all"
               >
                 {/* Order Header */}
-                <div className="flex flex-col gap-2 mb-4">
-                  <h2 className="text-md font-semibold">
-                    Order Id :
-                    <span className="text-gray-600 ml-1 break-all">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+                  <div>
+                    <h2 className="font-semibold text-lg text-gray-800">
+                      Order ID
+                    </h2>
+                    <p className="text-gray-500 break-all text-sm">
                       {order._id}
-                    </span>
-                  </h2>
+                    </p>
+                  </div>
 
-                  <p className="font-bold">
-                    Amount :
-                    <span className="text-gray-600 ml-1">
-                      {order.currency} {order.amount.toFixed(2)}
-                    </span>
-                  </p>
+                  <div>
+                    <p className="text-xl font-bold text-indigo-600">
+                      ₹{order.amount.toFixed(2)}
+                    </p>
+                  </div>
                 </div>
 
-                {/* User Info */}
-                <div className="flex justify-between items-center mb-4">
-                  <div>
-                    <p className="text-sm">
-                      <span className="font-bold">User :</span>{" "}
+                {/* User Info + Status */}
+                <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+                  <div className="space-y-1">
+                    <p>
+                      <span className="font-semibold">User:</span>{" "}
                       {order.user?.firstname} {order.user?.lastname}
                     </p>
-                    <p className="text-sm">
-                      <span className="font-bold">Email :</span>{" "}
+
+                    <p>
+                      <span className="font-semibold">Email:</span>{" "}
                       {order.user?.email}
                     </p>
                   </div>
 
                   <span
-                    className={`text-white text-sm px-3 py-1 rounded-full ${
+                    className={`text-white text-sm px-4 py-2 rounded-full self-start ${
                       order.status === "Paid"
                         ? "bg-green-500"
                         : order.status === "Failed"
@@ -72,45 +80,58 @@ const OrderCard = ({ userOrder }) => {
 
                 {/* Products */}
                 <div>
-                  <h3 className="font-semibold mb-3">Products :</h3>
+                  <h3 className="font-semibold text-lg mb-4 text-gray-800">
+                    Products
+                  </h3>
 
-                  <div className="flex flex-col gap-3">
-                    {order.products.map((product, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-4 bg-gray-50 p-3 rounded-xl"
-                      >
-                        {/* Image */}
-                        <img
-                          src={
-                            product.productId?.productImg?.[0]?.url ||
-                            "/placeholder.png"
-                          }
-                          className="w-20 h-20 object-cover rounded-lg"
-                          alt="product"
-                        />
+                  <div className="grid gap-4">
+                    {order?.products?.length > 0 ? (
+                      order.products.map((product, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl hover:bg-indigo-50 transition"
+                        >
+                          <img
+                            src={
+                              product?.productId?.productImg?.[0]?.url ||
+                              "/placeholder.png"
+                            }
+                            className="w-24 h-24 object-cover rounded-xl"
+                            alt="product"
+                          />
 
-                        {/* Info */}
-                        <div className="flex flex-col">
-                          <span className="font-medium">
-                            {product.productId?.productName}
-                          </span>
-                          <span className="text-sm text-gray-600">
-                            Qty: {product.quantity}
-                          </span>
-                          <span className="text-sm font-semibold">
-                            ₹{product.productId?.productPrice}
-                          </span>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-800">
+                              {product?.productId?.productName ||
+                                "Product not found"}
+                            </h4>
+
+                            <p className="text-sm text-gray-500">
+                              Quantity: {product?.quantity || 0}
+                            </p>
+
+                            <p className="text-indigo-600 font-bold mt-1">
+                              ₹{product?.productId?.productPrice || 0}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-center py-4">
+                        No products found
+                      </p>
+                    )}
                   </div>
                 </div>
+
+                {/* Invoice */}
                 <a
                   href={`${import.meta.env.VITE_URL}/api/v1/invoice/${order._id}`}
                   target="_blank"
-                  className="text-black  mt-2 inline-block"
+                  rel="noreferrer"
+                  className="mt-6 inline-flex items-center gap-2 bg-indigo-500 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl transition"
                 >
+                  <Download size={18} />
                   Download Invoice
                 </a>
               </div>

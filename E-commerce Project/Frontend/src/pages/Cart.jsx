@@ -83,49 +83,67 @@ const Cart = () => {
     loadCart();
   }, [dispatch]);
   return (
-    <div className="pt-30 bg-gray-50 ">
+  <div className="pt-30 min-h-screen relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-pink-50">
+    
+    {/* Background Design */}
+    <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-300/20 rounded-full blur-3xl"></div>
+    <div className="absolute bottom-10 right-10 w-80 h-80 bg-pink-300/20 rounded-full blur-3xl"></div>
+    <div className="absolute top-1/2 left-1/3 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl"></div>
+
+    <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#6366f1_1px,transparent_1px),linear-gradient(to_bottom,#6366f1_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+
+    <div className="relative z-10">
       {cart?.items?.length > 0 ? (
         <div className="max-w-7xl mx-auto p-10">
-          <h1 className="text-2xl font-bold text-gray-800 mb-7">
+          <h1 className="text-3xl font-bold text-gray-800 mb-7">
             Shopping Cart
           </h1>
+
           <div className="max-w-7xl mx-auto flex gap-7">
             <div className="flex flex-col gap-5 flex-1">
               {cart?.items?.map((product, index) => {
                 return (
-                  <Card key={index}>
-                    <div className="flex justify-between items-center pr-6">
+                  <Card
+                    key={index}
+                    className="backdrop-blur-md bg-white/80 border border-white/40 shadow-lg hover:shadow-xl transition-all"
+                  >
+                    <div className="flex justify-between items-center pr-6 p-4">
                       <div className="flex items-center gap-5 w-[350px]">
                         <img
                           src={product?.productId?.productImg?.[0]?.url}
                           alt=""
-                          className="w-25 h-25 pl-5 rounded"
+                          className="w-25 h-25 rounded-lg object-cover"
                         />
                         <div className="w-70">
                           <h1 className="font-semibold truncate">
                             {product?.productId?.productName}
                           </h1>
-                          <p>₹{product?.productId?.productPrice}</p>
+                          <p className="text-indigo-600 font-medium">
+                            ₹{product?.productId?.productPrice}
+                          </p>
                         </div>
                       </div>
-                      <div className="flex gap-5 items-center ">
+
+                      <div className="flex gap-5 items-center">
                         <Button
                           onClick={() =>
                             handleUpdateQuantity(
                               product.productId._id,
-                              "decrease",
+                              "decrease"
                             )
                           }
                           variant="outline"
                         >
                           -
                         </Button>
-                        <span> {product.quantity} </span>
+
+                        <span>{product.quantity}</span>
+
                         <Button
                           onClick={() =>
                             handleUpdateQuantity(
                               product.productId._id,
-                              "increase",
+                              "increase"
                             )
                           }
                           variant="outline"
@@ -133,14 +151,17 @@ const Cart = () => {
                           +
                         </Button>
                       </div>
-                      <p>
-                        ₹{product?.productId?.productPrice * product?.quantity}
+
+                      <p className="font-semibold">
+                        ₹
+                        {product?.productId?.productPrice * product?.quantity}
                       </p>
+
                       <p
                         onClick={() => handleRemove(product?.productId?._id)}
-                        className="flex text-red-500 items-center justify-center gap-2 cursor-pointer"
+                        className="flex text-red-500 items-center justify-center gap-2 cursor-pointer hover:text-red-700"
                       >
-                        <Trash color="#cd3232" />
+                        <Trash />
                         Remove
                       </p>
                     </div>
@@ -148,44 +169,55 @@ const Cart = () => {
                 );
               })}
             </div>
+
             <div>
-              <Card className="w-[400px]">
+              <Card className="w-[400px] backdrop-blur-md bg-white/80 border border-white/40 shadow-xl">
                 <CardHeader>
-                  <CardTitle className="text-2xl">Order Summary</CardTitle>
+                  <CardTitle className="text-2xl">
+                    Order Summary
+                  </CardTitle>
                 </CardHeader>
+
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
                     <span className="text-lg">
-                      Subtotal ({cart?.items?.length}items)
+                      Subtotal ({cart?.items?.length} items)
                     </span>
                     <span className="text-lg">
                       ₹{cart?.totalPrice?.toLocaleString("en-IN")}
                     </span>
                   </div>
+
                   <div className="flex justify-between">
                     <span className="text-xl">Shipping</span>
                     <span className="text-xl">₹{shipping}</span>
                   </div>
+
                   <div className="flex justify-between">
                     <span className="text-xl">Tax (5%)</span>
                     <span className="text-xl">₹{tax}</span>
                   </div>
+
                   <Separator />
+
                   <div className="flex justify-between font-bold text-lg">
                     <span>Total</span>
                     <span>₹{total}</span>
                   </div>
+
                   <Button
-                    onClick={() => navigate('/address')}
-                    className="w-full bg-indigo-500 hover:bg-indigo-700 hover:scale-105 text-xl"
+                    onClick={() => navigate("/address")}
+                    className="w-full bg-indigo-500 hover:bg-indigo-700 text-xl"
                   >
                     Place Order
                   </Button>
-                  <Button variant="outline" className="w-full bg-transparent">
+
+                  <Button variant="outline" className="w-full">
                     <Link to="/products">Continue Shopping</Link>
                   </Button>
+
                   <div className="text-md text-muted-foreground pt-4">
-                    <p>* Free Shipping on order over 299</p>
+                    <p>* Free Shipping on orders over ₹299</p>
                     <p>* 30 Days Return Policy</p>
                   </div>
                 </CardContent>
@@ -195,20 +227,22 @@ const Cart = () => {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
-          <div className="bg-pink-100 p-6 rounded-b-full">
+          <div className="bg-pink-100 p-6 rounded-full shadow-lg">
             <ShoppingCart className="w-16 h-16 text-pink-600" />
           </div>
+
           <h1 className="mt-6 text-2xl font-bold text-gray-800">
             Your Cart Is Empty
           </h1>
+
           <p className="mt-2 text-gray-600">
-            {" "}
-            Looks Like you haven't added anything to your cart yet
+            Looks like you haven't added anything yet
           </p>
         </div>
       )}
     </div>
-  );
+  </div>
+);
 };
 
 export default Cart;
