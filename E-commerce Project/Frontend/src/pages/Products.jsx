@@ -16,8 +16,8 @@ import store from "@/redux/store";
 import { setProducts } from "@/redux/productSlice";
 
 const Products = () => {
-  const {products} = useSelector((store) => store.product);
-  const [sortOrder,setSortOrder] = useState()
+  const { products } = useSelector((store) => store.product);
+  const [sortOrder, setSortOrder] = useState();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [brand, setBrand] = useState("All");
@@ -65,7 +65,7 @@ const Products = () => {
     }
 
     filtered = filtered.filter(
-      p => p.productPrice >= priceRange[0] && p.productPrice <= priceRange[1],
+      (p) => p.productPrice >= priceRange[0] && p.productPrice <= priceRange[1],
     );
 
     if (sortOrder === "Low to High") {
@@ -73,8 +73,8 @@ const Products = () => {
     } else if (sortOrder === "High to Low") {
       filtered.sort((a, b) => b.productPrice - a.productPrice);
     }
-    dispatch(setProducts(filtered))
-  },[search,category,brand,sortOrder,priceRange,allProducts,dispatch]);
+    dispatch(setProducts(filtered));
+  }, [search, category, brand, sortOrder, priceRange, allProducts, dispatch]);
 
   useEffect(() => {
     getAllProduct();
@@ -95,24 +95,40 @@ const Products = () => {
           setPriceRange={setPriceRange}
         />
         {/* MainProduct Section */}
+        {/* MainProduct Section */}
         <div className="flex flex-col flex-1">
-          <div className="flex justify-end mb-4">
-            <Select onValueChange={(value)=>setSortOrder(value)}>
-              <SelectTrigger className="w-60">
-                <SelectValue placeholder="Sort By Price" />
+          <div className="flex justify-between items-center mb-6 bg-white shadow-sm rounded-xl px-5 py-4 border">
+            <h2 className="text-xl font-semibold text-gray-800">
+              {category === "All"
+                ? "Explore All Products"
+                : `Explore ${category}`}
+            </h2>
+
+            <Select onValueChange={(value) => setSortOrder(value)}>
+              <SelectTrigger className="w-64 h-12 rounded-xl border-2 border-gray-200 bg-gray-50 hover:bg-white transition-all duration-200 shadow-sm focus:ring-2 focus:ring-black">
+                <SelectValue placeholder="Sort Products" />
               </SelectTrigger>
-              <SelectContent>
+
+              <SelectContent className="rounded-xl border shadow-xl bg-white">
                 <SelectGroup>
-                  <SelectItem value="Low to High">
-                    Price : Low to High
+                  <SelectItem
+                    value="Low to High"
+                    className="cursor-pointer hover:bg-gray-100"
+                  >
+                    Price: Low → High
                   </SelectItem>
-                  <SelectItem value="High to Low">
-                    Price : High to Low
+
+                  <SelectItem
+                    value="High to Low"
+                    className="cursor-pointer hover:bg-gray-100"
+                  >
+                    Price: High → Low
                   </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
+
           {/* Product Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7">
             {products.map((product) => {
