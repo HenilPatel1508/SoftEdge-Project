@@ -80,3 +80,13 @@ User management
 ### Live URL
 
 https://e-commerce-project-hbaj.onrender.com
+
+### USER Login
+
+# Email:henilp1508@gmail.com
+# pass:Henil@1508
+
+### Admin Login
+
+# Email:henilpatel1508@gmail.com
+# pass:Happy@1508
