@@ -81,12 +81,12 @@ User management
 
 https://e-commerce-project-hbaj.onrender.com
 
-### USER Login
+# USER Login
 
-# Email:henilp1508@gmail.com
-# pass:Henil@1508
+### Email:henilp1508@gmail.com
+### pass:Henil@1508
 
-### Admin Login
+# Admin Login
 
-# Email:henilpatel1508@gmail.com
-# pass:Happy@1508
+### Email:henilpatel1508@gmail.com
+### pass:Happy@1508
