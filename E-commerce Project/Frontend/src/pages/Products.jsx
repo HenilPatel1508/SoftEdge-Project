@@ -25,16 +25,42 @@ const Products = () => {
   const [loading, setLoading] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 99999]);
   const dispatch = useDispatch();
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
 
-  const getAllProduct = async () => {
+  // const getAllProduct = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const res = await axios.get(
+  //       `${import.meta.env.VITE_URL}/api/v1/product/getAllProduct`,
+  //     );
+  //     if (res.data.success) {
+  //       setAllProducts(res.data.products);
+  //       console.log(res.data);
+  //       dispatch(setProducts(res.data.products));
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error(error.response.data.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const getAllProduct = async (page = 1) => {
     try {
       setLoading(true);
+
       const res = await axios.get(
-        `${import.meta.env.VITE_URL}/api/v1/product/getAllProduct`,
+        `${import.meta.env.VITE_URL}/api/v1/product/getAllProduct?page=${page}&limit=${limit}`,
       );
+
       if (res.data.success) {
         setAllProducts(res.data.products);
-        console.log(res.data);
+        setPage(res.data.currentPage);
+        setTotalPages(res.data.totalPages);
+
         dispatch(setProducts(res.data.products));
       }
     } catch (error) {
@@ -44,7 +70,6 @@ const Products = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     if (allProducts.length === 0) return;
 
@@ -77,8 +102,8 @@ const Products = () => {
   }, [search, category, brand, sortOrder, priceRange, allProducts, dispatch]);
 
   useEffect(() => {
-    getAllProduct();
-  }, []);
+    getAllProduct(page);
+  }, [page]);
   return (
     <div className="pt-25 pb-10">
       <div className="max-w-7xl mx-auto flex gap-7">
@@ -140,6 +165,27 @@ const Products = () => {
                 />
               );
             })}
+          </div>
+          <div className="flex justify-center items-center gap-4 mt-8">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((prev) => prev - 1)}
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+            >
+              Prev
+            </button>
+
+            <span>
+              Page {page} of {totalPages}
+            </span>
+
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage((prev) => prev + 1)}
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

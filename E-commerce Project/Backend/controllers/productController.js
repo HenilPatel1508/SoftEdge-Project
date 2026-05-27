@@ -1,6 +1,7 @@
 import { Product } from "../models/productModel.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
+import redis from "../utils/redisClient.js";
 
 // export const addProduct = async (req, res) => {
 //   try {
@@ -106,28 +107,32 @@ export const addProduct = async (req, res) => {
   }
 };
 
-// export const getAllProduct = async (_, res) => {
+// export const getAllProduct = async (req, res) => {
 //   try {
-//     const products = await Product.find();
-//     if (!products) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "No Product Available",
-//         products: [],
-//       });
-//     }
+//     const page = Number(req.query.page) || 1;
+//     const limit = Number(req.query.limit) || 10;
+
+//     const skip = (page - 1) * limit;
+
+//     const totalProducts = await Product.countDocuments();
+
+//     const products = await Product.find()
+//       .sort({ createdAt: -1 })
+//       .skip(skip)
+//       .limit(limit);
+
 //     return res.status(200).json({
 //       success: true,
 //       products,
+//       currentPage: page,
+//       totalPages: Math.ceil(totalProducts / limit),
+//       totalProducts,
 //     });
 //   } catch (error) {
-//     return (
-//       res.status(500),
-//       json({
-//         success: false,
-//         message: error.message,
-//       })
-//     );
+//     return res.status(500).json({
+//       success: false,
+//       message: error.message,
+//     });
 //   }
 // };
 
@@ -137,29 +142,45 @@ export const getAllProduct = async (req, res) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
 
+    const key = `products:page:${page}:limit:${limit}`;
+
+    // 1️⃣ Check cache first
+    const cachedData = await redis.get(key);
+
+    if (cachedData) {
+      return res.status(200).json({
+        success: true,
+        source: "cache",
+        ...JSON.parse(cachedData),
+      });
+    }
+
+    // 2️⃣ DB query
     const skip = (page - 1) * limit;
 
     const totalProducts = await Product.countDocuments();
 
     const products = await Product.find()
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    if (!products.length) {
-      return res.status(404).json({
-        success: false,
-        message: "No Product Available",
-        products: [],
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
+    const response = {
       products,
       currentPage: page,
       totalPages: Math.ceil(totalProducts / limit),
       totalProducts,
+    };
+
+    // 3️⃣ Save in cache (important)
+    await redis.setEx(key, 60, JSON.stringify(response)); // 60 sec cache
+
+    return res.status(200).json({
+      success: true,
+      source: "db",
+      ...response,
     });
+
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -167,6 +188,8 @@ export const getAllProduct = async (req, res) => {
     });
   }
 };
+
+
 export const deleteProduct = async (req,res) => {
   try {
     const { productId } = req.params;
