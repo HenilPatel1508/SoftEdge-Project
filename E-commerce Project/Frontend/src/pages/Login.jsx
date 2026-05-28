@@ -61,7 +61,6 @@ const Login = () => {
           navigate("/");
         }
 
-        
         toast.success(res.data.message, { position: "top-right" });
       }
     } catch (error) {
@@ -72,91 +71,103 @@ const Login = () => {
     }
   };
   return (
-    <div>
-      <div className="flex justify-center items-center min-h-screen bg-indigo-100">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="grid text-center text-2xl">
-              Login your account
-            </CardTitle>
-            <CardDescription className="grid text-center text-lg">
-              Enter your Details to Login your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-3">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-100 via-white to-purple-100">
+      {/* 🔵 Animated Background Blobs */}
+      <div className="absolute w-[400px] h-[400px] bg-indigo-400/30 rounded-full blur-3xl animate-pulse top-[-100px] left-[-100px]" />
+      <div className="absolute w-[350px] h-[350px] bg-purple-400/30 rounded-full blur-3xl animate-bounce bottom-[-120px] right-[-100px]" />
+
+      {/* 🧊 Login Card */}
+      <Card className="w-full max-w-md backdrop-blur-xl bg-white/70 shadow-2xl border border-white/40 rounded-2xl transition-all duration-300 hover:scale-[1.01]">
+        <CardHeader>
+          <CardTitle className="text-center text-5xl font-bold text-indigo-700">
+            Welcome Back
+          </CardTitle>
+          <CardDescription className="text-center text-00000xl text-gray-600">
+            Login to continue shopping 🚀
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex flex-col gap-4">
+            {/* Email */}
+            <div className="grid gap-2">
+              <Label htmlFor="email" className="text-gray-700">
+                Email
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="m@example.com"
+                value={formData.email}
+                onChange={handlechange}
+                className="transition-all duration-300 focus:ring-2 focus:ring-indigo-400 focus:scale-[1.01]"
+                required
+              />
+            </div>
+
+            {/* Password */}
+            <div className="grid gap-2">
+              <Label htmlFor="password" className="text-gray-700">
+                Password
+              </Label>
+
+              <div className="relative">
                 <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  value={formData.email}
+                  id="password"
+                  name="password"
+                  placeholder="Enter password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
                   onChange={handlechange}
+                  className="pr-10 transition-all duration-300 focus:ring-2 focus:ring-indigo-400 focus:scale-[1.01]"
                   required
                 />
-              </div>
-              <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    name="password"
-                    placeholder="Enter a Password"
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={handlechange}
-                    required
+
+                {showPassword ? (
+                  <EyeOff
+                    onClick={() => setShowPassword(false)}
+                    className="w-5 h-5 text-gray-600 absolute right-3 top-3 cursor-pointer hover:text-indigo-600 transition"
                   />
-                  {showPassword ? (
-                    <EyeOff
-                      onClick={() => {
-                        setShowPassword(false);
-                      }}
-                      className="w-5 h-5 text-gray-700 absolute right-5 bottom-2"
-                    />
-                  ) : (
-                    <Eye
-                      onClick={() => {
-                        setShowPassword(true);
-                      }}
-                      className="w-5 h-5 text-gray-700 absolute right-5 bottom-2"
-                    />
-                  )}
-                </div>
+                ) : (
+                  <Eye
+                    onClick={() => setShowPassword(true)}
+                    className="w-5 h-5 text-gray-600 absolute right-3 top-3 cursor-pointer hover:text-indigo-600 transition"
+                  />
+                )}
               </div>
             </div>
-          </CardContent>
-          <CardFooter className="flex-col gap-3 ">
-            <Button
-              onClick={submitHandler}
-              type="submit"
-              className="w-full cursor-pointer p-5 bg-indigo-500 hover:bg-indigo-800"
+          </div>
+        </CardContent>
+
+        <CardFooter className="flex flex-col gap-3">
+          {/* Button */}
+          <Button
+            onClick={submitHandler}
+            className="w-full py-5 bg-indigo-600 hover:bg-indigo-800 transition-all duration-300 hover:scale-[1.02] shadow-lg"
+          >
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Logging in...
+              </span>
+            ) : (
+              "Login"
+            )}
+          </Button>
+
+          {/* Signup */}
+          <p className="text-sm text-gray-600">
+            Don't have an account?{" "}
+            <Link
+              to="/signup"
+              className="text-indigo-700 font-medium hover:underline"
             >
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Please Wait
-                </>
-              ) : (
-                "Login"
-              )}
-            </Button>
-            <p>
-              Don't have an Acoount ?{" "}
-              <Link
-                to={"/signup"}
-                className="hover:underline cursor-pointer text-cyan-700"
-              >
-                Signup
-              </Link>
-            </p>
-          </CardFooter>
-        </Card>
-      </div>
+              Signup
+            </Link>
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 };

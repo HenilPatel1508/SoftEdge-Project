@@ -1,7 +1,6 @@
 import { Product } from "../models/productModel.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
-import redis from "../utils/redisClient.js";
 
 // export const addProduct = async (req, res) => {
 //   try {
