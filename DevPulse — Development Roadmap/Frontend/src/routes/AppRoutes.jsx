@@ -7,6 +7,8 @@ import OtpVerify from "../pages/auth/verify-otp.jsx";
 import Forgotpassword from "../pages/auth/Forgot-password.jsx";
 import ResetPassword from "../pages/auth/Reset-password.jsx";
 import Dashboard from "../pages/Dashboard.jsx";
+import MainLayout from "../layout/MainLayout.jsx";
+import Profile from "../pages/Profile.jsx";
 // import NotFound from "../pages/NotFound";
 
 const AppRoutes = () => {
@@ -19,7 +21,13 @@ const AppRoutes = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<Forgotpassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/dashboard" element={<Dashboard />} />  
+      {/* <Route path="/dashboard" element={<Dashboard />} />   */}
+
+      <Route element={<MainLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+          {/* baki pages here */}
+        </Route>
       {/* <Route path="*" element={<NotFound />} /> */}
     </Routes>
   );

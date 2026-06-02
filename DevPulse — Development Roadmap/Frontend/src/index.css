@@ -11,3 +11,22 @@
   background-size: 400% 400%;
   animation: bgMove 12s ease infinite;
 }
+
+/* Modern sidebar scrollbar */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #06b6d4;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #22d3ee;
+}
