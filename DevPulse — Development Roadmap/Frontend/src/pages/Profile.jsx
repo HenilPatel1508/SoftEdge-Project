@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaCamera, FaCheckCircle, FaFire, FaCode } from "react-icons/fa";
 import { FaTimes } from "react-icons/fa";
-import { themeColors } from "../theme/colors";
+import { useTheme } from "../context/ThemeContext";
 
 const Profile = () => {
   // ================= PROFILE DATA =================
@@ -58,8 +58,8 @@ const Profile = () => {
   };
 
   // ================= THEME =================
-  const [theme, setTheme] = useState("blue");
-
+  const {theme, setTheme, themeColors} = useTheme();
+console.log("THEME CONTEXT:", useTheme);
   const colors = ["blue", "purple", "green", "red", "orange", "pink"];
 
   return (
@@ -268,13 +268,13 @@ const Profile = () => {
           <p className="text-sm text-gray-500 mb-2">Accent Color</p>
 
           <div className="grid grid-cols-3 gap-2">
-            {colors.map((c) => (
+            {Object.keys(themeColors).map((c) => (
               <div
                 key={c}
                 onClick={() => setTheme(c)}
                 className={`h-8 rounded cursor-pointer ${
                   theme === c ? "ring-2 ring-black" : ""
-                } bg-${c}-500`}
+                } ${themeColors[c].split(" ")[0]}`}
               />
             ))}
           </div>

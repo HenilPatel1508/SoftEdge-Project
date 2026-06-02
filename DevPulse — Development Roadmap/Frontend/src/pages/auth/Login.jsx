@@ -180,8 +180,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Webcam from "react-webcam";
 import Swal from "sweetalert2";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showFaceModal, setShowFaceModal] = useState(false);
   const navigate = useNavigate();
@@ -225,9 +227,10 @@ const Login = () => {
         showConfirmButton: false,
       });
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
+      // localStorage.setItem("token", res.data.token);
+      // localStorage.setItem("user", JSON.stringify(res.data.user));
+      
+      login(res.data.user, res.data.token);
       navigate("/dashboard");
     } catch (error) {
       Swal.fire({
