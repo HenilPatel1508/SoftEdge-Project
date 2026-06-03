@@ -10,8 +10,19 @@ import {
   FaGithub,
   FaStopwatch,
 } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const [weather, setWeather] = useState(null);
+  const [loadingWeather, setLoadingWeather] = useState(true);
+  const userName =
+    user?.name ||
+    user?.fullName ||
+    user?.username ||
+    user?.email?.split("@")[0] ||
+    "Developer";
+
   // ================= STATS =================
   const [commitCount, setCommitCount] = useState(31); // 🔥 ADDED
 
@@ -52,6 +63,36 @@ const Dashboard = () => {
     purple: "text-purple-500",
     emerald: "text-emerald-500",
   };
+
+  // ================= WEATHER API =================
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        setLoadingWeather(true);
+
+        const API_KEY = "30c4a2dd1d6c9e4a82b89c1ca4bfa056";
+        const city = "Ahmedabad";
+
+        const res = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=23.0258&longitude=72.5873&hourly=temperature_2m`,
+        );
+
+        const data = await res.json();
+
+        setWeather(data.hourly.temperature_2m ? {
+          main: { temp: data.hourly.temperature_2m[0] },
+          weather: [{ main: "Clear" }],
+          name: city,
+        } : null);
+      } catch (err) {
+        console.log("Weather error:", err);
+      } finally {
+        setLoadingWeather(false);
+      }
+    };
+
+    fetchWeather();
+  }, []);
 
   // ================= POMODORO =================
   const [pomodoro, setPomodoro] = useState(25 * 60);
@@ -110,7 +151,7 @@ const Dashboard = () => {
   const refreshGithub = () => {
     const newData = Array.from(
       { length: 7 },
-      () => Math.floor(Math.random() * 30) + 5
+      () => Math.floor(Math.random() * 30) + 5,
     );
 
     setGithubData(newData);
@@ -122,14 +163,16 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8 w-full">
-
       {/* HEADER */}
       <div>
-        <h1 className="text-4xl font-bold text-black-600 tracking-tight">
+        <h1 className="text-4xl font-bold text-black tracking-tight">
           Dashboard
         </h1>
+
         <p className="text-gray-500 mt-1">
-          Welcome back! Here's your productivity overview ⚡
+          Welcome back,{" "}
+          <span className="font-bold text-blue-600">{userName}</span> 👋 Here's
+          your productivity overview ⚡
         </p>
       </div>
 
@@ -147,16 +190,13 @@ const Dashboard = () => {
 
             <h2 className="text-3xl font-bold mt-2">{item.value}</h2>
 
-            <p className={`${colorMap[item.color]} text-sm mt-1`}>
-              {item.sub}
-            </p>
+            <p className={`${colorMap[item.color]} text-sm mt-1`}>{item.sub}</p>
           </div>
         ))}
       </div>
 
       {/* MIDDLE */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
         {/* POMODORO */}
         <div className="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-md transition">
           <h3 className="font-semibold text-gray-800 flex items-center gap-2">
@@ -200,22 +240,32 @@ const Dashboard = () => {
         </div>
 
         {/* WEATHER */}
+        {/* WEATHER */}
         <div className="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-md transition">
           <h3 className="font-semibold text-gray-800 flex items-center gap-2 mb-3">
             <FaCloudSun /> Weather
           </h3>
 
-          <div className="text-center">
-            <h2 className="text-4xl font-bold">72°F</h2>
-            <p className="text-gray-500">Sunny, Clear Sky</p>
-          </div>
-        </div>
+          {loadingWeather ? (
+            <p className="text-gray-500">Loading weather...</p>
+          ) : weather ? (
+            <div className="text-center">
+              <h2 className="text-4xl font-bold">
+                {Math.round(weather.main?.temp)}°C
+              </h2>
 
+              <p className="text-gray-500">
+                {weather.weather?.[0]?.main}, {weather.name}
+              </p>
+            </div>
+          ) : (
+            <p className="text-red-500">Weather not available</p>
+          )}
+        </div>
       </div>
 
       {/* BOTTOM */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
         {/* TASKS */}
         <div className="bg-white p-6 rounded-2xl border shadow-sm">
           <h3 className="font-semibold text-gray-800 flex items-center gap-2 mb-4">
@@ -280,9 +330,7 @@ const Dashboard = () => {
             {coding ? "Stop" : "Start Coding"}
           </button>
         </div>
-
       </div>
-
     </div>
   );
 };

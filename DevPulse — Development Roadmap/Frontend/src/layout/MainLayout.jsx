@@ -6,19 +6,19 @@ const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="flex">
-      
+    <div className="flex bg-linear-to-br from-slate-100 via-blue-50 to-indigo-100">
       {/* Sidebar */}
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
 
-      {/* Main Content (responsive width) */}
+      {/* Main Content */}
       <div
-        className={`min-h-screen bg-gray-100 w-full p-6 transition-all duration-300
+        className={`min-h-screen w-full p-6 transition-all duration-300 ease-in-out
         ${collapsed ? "ml-20" : "ml-64"}`}
       >
-        <Outlet />
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 min-h-[calc(100vh-3rem)]">
+          <Outlet />
+        </div>
       </div>
-
     </div>
   );
 };
