@@ -1,17 +1,23 @@
-import React, { useState } from "react";
-import { FaCamera, FaCheckCircle, FaFire, FaCode } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { FaCamera, FaCheckCircle, } from "react-icons/fa";
 import { FaTimes } from "react-icons/fa";
 import { useTheme } from "../context/ThemeContext";
-
+import { useAuth } from "../context/AuthContext";
+import { FaFire, FaSun, FaMoon, FaBug, FaCode, FaUsers } from "react-icons/fa";
 const Profile = () => {
+  const token = localStorage.getItem("token"); // 👈 JWT token
+
   // ================= PROFILE DATA =================
   const [profile, setProfile] = useState({
-    name: "John Doe",
-    role: "Full Stack Developer",
-    email: "john.doe@example.com",
-    location: "San Francisco, CA",
-    bio: "Passionate developer with 5+ years of experience building web applications. Love working with React, Node.js, and modern tech stack.",
+    name: "",
+    role: "" || "Developer",
+    email: "",
+    location: "",
+    bio: "",
   });
+
+  const [loading, setLoading] = useState(true);
 
   // input change handler
   const handleChange = (e) => {
@@ -22,19 +28,7 @@ const Profile = () => {
   };
 
   // ================= SKILLS =================
-  const [skills, setSkills] = useState([
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "Node.js",
-    "Python",
-    "Go",
-    "Docker",
-    "AWS",
-    "MongoDB",
-    "PostgreSQL",
-  ]);
-
+  const [skills, setSkills] = useState([]);
   const [newSkill, setNewSkill] = useState("");
 
   const addSkill = () => {
@@ -43,7 +37,16 @@ const Profile = () => {
     setNewSkill("");
   };
 
-  // ================= BADGES (TOGGLE) =================
+  // ================= BADGES =================
+
+  const badgeIcons = {
+    streak: FaFire,
+    earlyBird: FaSun,
+    nightOwl: FaMoon,
+    bugHunter: FaBug,
+    ninja: FaCode,
+    teamPlayer: FaUsers,
+  };
   const [badges, setBadges] = useState({
     streak: true,
     earlyBird: true,
@@ -58,9 +61,110 @@ const Profile = () => {
   };
 
   // ================= THEME =================
-  const {theme, setTheme, themeColors} = useTheme();
-console.log("THEME CONTEXT:", useTheme);
-  const colors = ["blue", "purple", "green", "red", "orange", "pink"];
+  const { theme, setTheme, themeColors } = useTheme();
+  useEffect(() => {
+    if (token) {
+      fetchProfile();
+    }
+  }, [token]);
+  // ================= FETCH PROFILE (API) =================
+  const fetchProfile = async () => {
+    try {
+      setLoading(true);
+
+      const res = await axios.get("http://localhost:5000/api/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const user = res.data.user;
+
+      setProfile({
+        name: user.name || "",
+        email: user.email || "",
+        role: user.role || "Developer",
+        location: user.location || "",
+        bio: user.bio || "",
+      });
+
+      setSkills(user.skills || []);
+    } catch (err) {
+      console.log("PROFILE FETCH ERROR:", err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  // ================= UPDATE PROFILE (API) =================
+  const updateProfile = async () => {
+    try {
+      const res = await axios.put(
+        "http://localhost:5000/api/users/profile",
+        {
+          name: profile.name,
+          role: profile.role,
+          email: profile.email,
+          location: profile.location,
+          bio: profile.bio,
+          skills,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      alert("Profile Updated Successfully");
+      console.log(res.data);
+    } catch (err) {
+      console.log("UPDATE ERROR:", err.message);
+      alert("Update Failed");
+    }
+  };
+
+ if (loading) {
+  return (
+    <div className="p-6 space-y-6 animate-pulse">
+
+      {/* HEADER SKELETON */}
+      <div className="space-y-2">
+        <div className="h-6 w-40 bg-gray-300 rounded"></div>
+        <div className="h-4 w-72 bg-gray-200 rounded"></div>
+      </div>
+
+      {/* PROFILE + FORM */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        {/* LEFT CARD */}
+        <div className="h-60 bg-gray-200 rounded-2xl"></div>
+
+        {/* FORM */}
+        <div className="md:col-span-2 space-y-3">
+          <div className="h-10 bg-gray-200 rounded"></div>
+          <div className="h-10 bg-gray-200 rounded"></div>
+          <div className="h-10 bg-gray-200 rounded"></div>
+          <div className="h-24 bg-gray-200 rounded"></div>
+          <div className="h-10 w-40 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+
+      {/* BADGES */}
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+        {Array(6)
+          .fill(0)
+          .map((_, i) => (
+            <div key={i} className="h-16 bg-gray-200 rounded-xl"></div>
+          ))}
+      </div>
+    </div>
+  );
+}
 
   return (
     <div className="space-y-6">
@@ -79,7 +183,7 @@ console.log("THEME CONTEXT:", useTheme);
           <div className="relative w-24 h-24 mx-auto">
             <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
               {profile.name
-                .split(" ")
+                ?.split(" ")
                 .map((n) => n[0])
                 .join("")}
             </div>
@@ -110,46 +214,48 @@ console.log("THEME CONTEXT:", useTheme);
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               name="name"
+              placeholder="Name"
               value={profile.name}
               onChange={handleChange}
               className="border p-2 rounded-lg"
-              placeholder="Full Name"
             />
 
             <input
               name="email"
+              placeholder="Email"
               value={profile.email}
               onChange={handleChange}
               className="border p-2 rounded-lg"
-              placeholder="Email"
             />
 
             <input
               name="role"
+              placeholder="Role"
               value={profile.role}
               onChange={handleChange}
               className="border p-2 rounded-lg"
-              placeholder="Role"
             />
 
             <input
               name="location"
+              placeholder="Location"
               value={profile.location}
               onChange={handleChange}
               className="border p-2 rounded-lg"
-              placeholder="Location"
             />
           </div>
 
           <textarea
             name="bio"
+            placeholder="Bio"
             value={profile.bio}
             onChange={handleChange}
             className="border p-2 rounded-lg w-full mt-4 h-28"
           />
 
+          {/* 🔥 API SAVE BUTTON */}
           <button
-            onClick={() => alert("Profile Saved (static demo)")}
+            onClick={updateProfile}
             className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg"
           >
             Save Changes
@@ -163,60 +269,26 @@ console.log("THEME CONTEXT:", useTheme);
           <FaFire className="text-orange-500" /> Developer Badges
         </h3>
 
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 text-center text-sm">
-          <div
-            onClick={() => toggleBadge("streak")}
-            className={`p-3 rounded-xl cursor-pointer ${
-              badges.streak ? "bg-yellow-50" : "bg-gray-50 text-gray-400"
-            }`}
-          >
-            🔥 100 Day Streak
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 text-sm text-center">
+          {Object.keys(badges).map((key) => {
+            const Icon = badgeIcons[key];
 
-          <div
-            onClick={() => toggleBadge("earlyBird")}
-            className={`p-3 rounded-xl cursor-pointer ${
-              badges.earlyBird ? "bg-yellow-50" : "bg-gray-50 text-gray-400"
-            }`}
-          >
-            🌅 Early Bird
-          </div>
+            return (
+              <div
+                key={key}
+                onClick={() => toggleBadge(key)}
+                className={`p-3 rounded-xl cursor-pointer flex flex-col items-center gap-2 transition ${
+                  badges[key]
+                    ? "bg-yellow-50 text-black"
+                    : "bg-gray-50 text-gray-400"
+                }`}
+              >
+                {Icon && <Icon className="text-lg" />}
 
-          <div
-            onClick={() => toggleBadge("nightOwl")}
-            className={`p-3 rounded-xl cursor-pointer ${
-              badges.nightOwl ? "bg-yellow-50" : "bg-gray-50 text-gray-400"
-            }`}
-          >
-            🦉 Night Owl
-          </div>
-
-          <div
-            onClick={() => toggleBadge("bugHunter")}
-            className={`p-3 rounded-xl cursor-pointer ${
-              badges.bugHunter ? "bg-yellow-50" : "bg-gray-50 text-gray-400"
-            }`}
-          >
-            🐛 Bug Hunter
-          </div>
-
-          <div
-            onClick={() => toggleBadge("ninja")}
-            className={`p-3 rounded-xl cursor-pointer ${
-              badges.ninja ? "bg-yellow-50" : "bg-gray-50 text-gray-400"
-            }`}
-          >
-            🥷 Code Ninja
-          </div>
-
-          <div
-            onClick={() => toggleBadge("teamPlayer")}
-            className={`p-3 rounded-xl cursor-pointer ${
-              badges.teamPlayer ? "bg-yellow-50" : "bg-gray-50 text-gray-400"
-            }`}
-          >
-            🤝 Team Player
-          </div>
+                <span className="capitalize">{key}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -232,15 +304,13 @@ console.log("THEME CONTEXT:", useTheme);
             {skills.map((skill, i) => (
               <span
                 key={i}
-                className="group bg-gray-100 px-3 py-1 rounded-full flex items-center gap-2"
+                className="bg-gray-100 px-3 py-1 rounded-full flex items-center gap-2"
               >
                 {skill}
-
                 <FaTimes
                   onClick={() =>
                     setSkills((prev) => prev.filter((_, index) => index !== i))
                   }
-                  className="text-gray-400 hover:text-red-500 cursor-pointer text-xs opacity-0 group-hover:opacity-100 transition"
                 />
               </span>
             ))}
@@ -252,10 +322,7 @@ console.log("THEME CONTEXT:", useTheme);
               placeholder="Add skill"
             />
 
-            <button
-              onClick={addSkill}
-              className="border px-3 py-1 rounded text-gray-500"
-            >
+            <button onClick={addSkill} className="border px-3 py-1 rounded">
               Add
             </button>
           </div>
@@ -264,8 +331,6 @@ console.log("THEME CONTEXT:", useTheme);
         {/* THEME */}
         <div className="bg-white p-6 rounded-2xl border shadow-sm">
           <h3 className="font-semibold mb-3">🎨 Theme</h3>
-
-          <p className="text-sm text-gray-500 mb-2">Accent Color</p>
 
           <div className="grid grid-cols-3 gap-2">
             {Object.keys(themeColors).map((c) => (

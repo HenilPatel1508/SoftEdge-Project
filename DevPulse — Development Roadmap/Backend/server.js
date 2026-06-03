@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import cors from "cors";
 import aiRoutes from "./routes/ai.routes.js";
+import userRoutes from "./routes/user.routes.js";
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
@@ -18,8 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // routes
 app.use("/auth", authRoutes);
-
-
+app.use("/api/users", userRoutes);
 app.use("/api/ai", aiRoutes);
 
 // Test route
